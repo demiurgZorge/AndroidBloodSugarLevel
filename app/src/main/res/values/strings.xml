@@ -1,4 +1,16 @@
 <resources>
-    <string name="app_name">AndroidBloodSugarLevel</string>
+    <string name="app_name">BloodSugarLevel</string>
+    <string name="title_activity_main2">MainActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="navigation_drawer_open">Open</string>
+    <string name="navigation_drawer_close">Close</string>
+
+
+    <!--  -->
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 </resources>
