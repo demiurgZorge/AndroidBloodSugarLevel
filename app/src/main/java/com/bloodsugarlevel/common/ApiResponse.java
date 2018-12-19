@@ -5,17 +5,17 @@ import org.json.JSONObject;
 
 import java.util.Map;
 
-public class Response {
+public class ApiResponse {
     String string = null;
     JSONArray jsonArray = null;
     JSONObject jsonObject = null;
     private boolean statusCode = false;
 
-    public Response() {
+    public ApiResponse() {
 
     }
 
-    public Response(Object r) {
+    public ApiResponse(Object r) {
         this();
         if (r instanceof JSONArray) {
             jsonArray = (JSONArray) r;
@@ -30,7 +30,7 @@ public class Response {
         }
     }
 
-    public Response jsonPath() {
+    public ApiResponse jsonPath() {
         return null;
     }
 

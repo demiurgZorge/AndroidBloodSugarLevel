@@ -14,21 +14,23 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.bloodsugarlevel.MyApplication;
 import com.bloodsugarlevel.androidbloodsugarlevel.R;
+import com.bloodsugarlevel.androidbloodsugarlevel.UrlBuilder;
 import com.bloodsugarlevel.androidbloodsugarlevel.dto.SugarDto;
 import com.bloodsugarlevel.common.ApiListResult;
 import com.bloodsugarlevel.common.FilterState;
+import com.bloodsugarlevel.common.ApiResponse;
 import com.bloodsugarlevel.common.PagingState;
 import com.bloodsugarlevel.common.QueryState;
 import com.bloodsugarlevel.common.SortState;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -78,41 +80,25 @@ public class GraphFragment extends Fragment implements Button.OnClickListener{
         graph.getGridLabelRenderer().setNumHorizontalLabels( listDto.size()-1);
 //
 ////        // set manual x bounds to have nice steps
-//        graph.getViewport().setMinX(listDto.get(0).date.getTime());
-//        graph.getViewport().setMaxX(listDto.get(listDto.size()-1).date.getTime());
-//        graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setMinX(listDto.get(0).date.getTime());
+        graph.getViewport().setMaxX(listDto.get(listDto.size()-1).date.getTime());
+        graph.getViewport().setXAxisBoundsManual(true);
 //
 //        graph.getViewport().setMinY(0.0f);
 //        graph.getViewport().setMaxY(30.0);
 //        graph.getGridLabelRenderer().setNumVerticalLabels(5);
 //
-//        graph.getGridLabelRenderer().setHumanRounding(false);
+        graph.getGridLabelRenderer().setHumanRounding(false);
 
     }
 
     private void getRange(final GraphView graph) {
         mRequestQueue = Volley.newRequestQueue(getContext());
-        String url ="http://78.46.233.90:8080/auth/sugar/getrange/1";
+        String url = UrlBuilder.getSugarListUrl(1L);
         List<FilterState> filters = new ArrayList<>();
         PagingState pagingState = new PagingState();
         SortState sortState = new SortState();
         QueryState query = new QueryState(pagingState, sortState, filters);
-
-//        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.POST, url, query.toJSONArray(),
-//                new Response.Listener<JSONArray>() {
-//                    @Override
-//                    public void onResponse(JSONArray response) {
-//                        List<SugarDto> listDto = extractSugarDtoList(response);
-//                        setGraphWithSugarLevelData(graph, listDto);
-//                    }
-//                }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                String string = error.toString();
-//                showAlertDialog(string);
-//            }
-//        });
-//        jsonArrayRequest.setTag(HTTP_VOLEY_TAG);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, query.toJSONObject(), new Response.Listener<JSONObject>() {
 
@@ -125,13 +111,11 @@ public class GraphFragment extends Fragment implements Button.OnClickListener{
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                String string = error.toString();
-                showAlertDialog(string);
+                showAlertDialog(error.toString());
 
             }
         });
         jsonObjectRequest.setTag(HTTP_VOLEY_TAG);
-
         mRequestQueue.add(jsonObjectRequest);
     }
 
@@ -147,59 +131,16 @@ public class GraphFragment extends Fragment implements Button.OnClickListener{
         dialog.show();
     }
 
-    private List<SugarDto> extractSugarDtoList(JSONArray response) {
-
-        com.bloodsugarlevel.common.Response resp = new com.bloodsugarlevel.common.Response(response);
-        try {
-            ApiListResult<List<SugarDto>> listResult = ApiListResult.fromResponse(resp, SugarDto.class).getListResult();
-            return listResult.getData();
-        } catch (Exception e) {
-            showAlertDialog(e.getMessage());
-        }
-
-        ArrayList<SugarDto> listDto = new ArrayList<>();
-//        for (int i = 0; i < response.length() ; i++){
-//            try {
-//                Object obj = response.get(i);
-//                SugarDto dto = null;
-//                try {
-//                    dto = mapper.readValue(obj.toString(), SugarDto.class);
-//                    listDto.add(dto);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
-        return null;
-    }
 
     private List<SugarDto> extractSugarDtoList(JSONObject response) {
 
-        com.bloodsugarlevel.common.Response resp = new com.bloodsugarlevel.common.Response(response);
+        ApiResponse resp = new ApiResponse(response);
         try {
             ApiListResult<List<SugarDto>> listResult = ApiListResult.fromResponse(resp, SugarDto.class).getListResult();
             return listResult.getData();
         } catch (Exception e) {
             showAlertDialog(e.getMessage());
         }
-
-        ArrayList<SugarDto> listDto = new ArrayList<>();
-//        for (int i = 0; i < response.length() ; i++){
-//            try {
-//                Object obj = response.get(i);
-//                SugarDto dto = null;
-//                try {
-//                    dto = mapper.readValue(obj.toString(), SugarDto.class);
-//                    listDto.add(dto);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
         return null;
     }
 
