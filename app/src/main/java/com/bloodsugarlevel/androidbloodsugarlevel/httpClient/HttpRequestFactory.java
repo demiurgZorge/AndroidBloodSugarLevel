@@ -5,6 +5,7 @@ import android.content.Context;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.bloodsugarlevel.androidbloodsugarlevel.UrlBuilder;
+import com.bloodsugarlevel.androidbloodsugarlevel.dto.SugarCreateDto;
 import com.bloodsugarlevel.androidbloodsugarlevel.dto.SugarDto;
 import com.bloodsugarlevel.common.FilterState;
 import com.bloodsugarlevel.common.PagingState;
@@ -17,10 +18,10 @@ import java.util.List;
 
 public class HttpRequestFactory {
 
-    public static JsonObjectRequest create(Context context,
-                                           IUiUpdateListener uiUpdateListener,
-                                           Date beginDate, Date endDate,
-                                           String tag){
+    public static JsonObjectRequest createSugarListRequest(Context context,
+                                                           IUiUpdateListListener uiUpdateListener,
+                                                           Date beginDate, Date endDate,
+                                                           String tag){
         List<FilterState> filters = new ArrayList<>();
         FilterState beginState = new FilterState();
         beginState.setFilterName("minDatetime");
@@ -40,6 +41,20 @@ public class HttpRequestFactory {
                 UrlBuilder.getSugarListUrl(1L),
                 query.toJSONObject(),
                 new  ListResponseListenerBase<>(context, SugarDto.class, uiUpdateListener),
+                new ErroResponseListenerImpl(context));
+        request.setTag(tag);
+        return request;
+    }
+
+    public static JsonObjectRequest createSugarRequest(Context context,
+                                                       IUiUpdateEntityListener uiUpdateListener,
+                                                       SugarCreateDto sugarDto,
+                                                           String tag){
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
+                UrlBuilder.createSugarUrl(1L),
+                sugarDto.toJSONObject(),
+                new  EntityResponseListenerBase<>(context, SugarDto.class, uiUpdateListener),
                 new ErroResponseListenerImpl(context));
         request.setTag(tag);
         return request;

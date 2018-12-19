@@ -14,7 +14,7 @@ import com.android.volley.toolbox.Volley;
 import com.bloodsugarlevel.androidbloodsugarlevel.R;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.GraphListenerImpl;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.HttpRequestFactory;
-import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.IUiUpdateListener;
+import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.IUiUpdateListListener;
 import com.bloodsugarlevel.androidbloodsugarlevel.input.DatePickerFragment;
 import com.bloodsugarlevel.androidbloodsugarlevel.input.DateTimeListener;
 import com.jjoe64.graphview.GraphView;
@@ -26,7 +26,7 @@ public class GraphFragment extends Fragment implements Button.OnClickListener{
     private long mLastClickTime = SystemClock.uptimeMillis();
     View mFragmentView;
     static RequestQueue mRequestQueue;
-    IUiUpdateListener mGraphListenerImpl;
+    IUiUpdateListListener mGraphListenerImpl;
     Button beginDateButton;
     Button endDateButton;
 
@@ -90,7 +90,7 @@ public class GraphFragment extends Fragment implements Button.OnClickListener{
     }
 
     private void setSugarListRequestListener() {
-        JsonObjectRequest jsonObjectRequest = HttpRequestFactory.create(getContext(),
+        JsonObjectRequest jsonObjectRequest = HttpRequestFactory.createSugarListRequest(getContext(),
                 mGraphListenerImpl, mBeginDate.getCalendar().getTime(),
                 mEndDate.getCalendar().getTime(),
                 FRAPH_SUGAR_VOLEY_TAG);

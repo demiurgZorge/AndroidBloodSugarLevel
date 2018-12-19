@@ -5,20 +5,19 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 
 import com.android.volley.Response;
-import com.bloodsugarlevel.common.ApiListResult;
 import com.bloodsugarlevel.common.ApiResponse;
+import com.bloodsugarlevel.common.ApiSuccessResult;
 
 import org.json.JSONObject;
 
-import java.util.List;
-
-public class ListResponseListenerBase<T>  implements Response.Listener<JSONObject> {
+public class EntityResponseListenerBase<T>  implements Response.Listener<JSONObject> {
 
     Context context;
     Class<T> klass;
-    List<Class<T>> data = null;
-    IUiUpdateListListener<Class<T>> uiListener;
-    public ListResponseListenerBase(Context context, Class<T> klass, IUiUpdateListListener<Class<T>> uiListener){
+    IUiUpdateEntityListener<Class<T>> uiListener;
+    Class<T> data;
+
+    public EntityResponseListenerBase(Context context, Class<T> klass, IUiUpdateEntityListener<Class<T>> uiListener){
         this.context = context;
         this.klass = klass;
         this.uiListener = uiListener;
@@ -28,8 +27,8 @@ public class ListResponseListenerBase<T>  implements Response.Listener<JSONObjec
     public void onResponse(JSONObject response) {
         ApiResponse resp = new ApiResponse(response);
         try {
-            ApiListResult<List<Class<T>>> listResult = ApiListResult.fromResponse(resp, klass).getListResult();
-            data = listResult.getData();
+            ApiSuccessResult<Class<T>> result = ApiSuccessResult.fromResponse(resp, klass).getSuccessResult();
+            data = result.getData();
             uiListener.onResponse(data);
         } catch (Exception e) {
             showAlertDialog(e.getMessage());
@@ -48,3 +47,4 @@ public class ListResponseListenerBase<T>  implements Response.Listener<JSONObjec
         dialog.show();
     }
 }
+

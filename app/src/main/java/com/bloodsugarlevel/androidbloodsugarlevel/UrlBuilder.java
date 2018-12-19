@@ -37,4 +37,9 @@ public class UrlBuilder {
     public static String getSugarListUrl(Long userId){
         return sugarService().append("getrange").append(SLASH).append(userId).toString();
     }
+
+    //"http://78.46.233.90:8080/auth/sugar/create/1";
+    public static String createSugarUrl(Long userId){
+        return sugarService().append("create").append(SLASH).append(userId).toString();
+    }
 }

@@ -8,7 +8,7 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.List;
 
-public class GraphListenerImpl implements IUiUpdateListener<SugarDto> {
+public class GraphListenerImpl implements IUiUpdateListListener<SugarDto> {
 
     GraphView graph;
 
