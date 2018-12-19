@@ -6,7 +6,7 @@ import android.widget.Button;
 import java.util.Calendar;
 import java.util.Date;
 
-public class DateTimeListener implements IDateTimeListener{
+public class DateTimeListener implements IDateTimeListener {
 
     public static final String TIME_PICKER_FORMAT = "hh:mm:ss a";
     public static final String DATE_PICKER_FORMAT = "yyyy-MM-dd";
@@ -20,7 +20,7 @@ public class DateTimeListener implements IDateTimeListener{
     public Button timeButton;
     public Button dateButton;
 
-    public DateTimeListener(){
+    public DateTimeListener() {
         final Calendar c = Calendar.getInstance();
         year = c.get(Calendar.YEAR);
         month = c.get(Calendar.MONTH);
@@ -39,7 +39,9 @@ public class DateTimeListener implements IDateTimeListener{
     public void onTimeSet(int hourOfDay, int minute) {
         this.hourOfDay = hourOfDay;
         this.minute = minute;
-        timeButton.setText(getHourMinuteString());
+        if (timeButton != null) {
+            timeButton.setText(getHourMinuteString());
+        }
     }
 
     @Override
@@ -47,10 +49,14 @@ public class DateTimeListener implements IDateTimeListener{
         this.year = year;
         this.month = month;
         this.day = day;
-        dateButton.setText(getYearMonthDayString());
+        if (dateButton != null) {
+            dateButton.setText(getYearMonthDayString());
+        }
     }
 
-    public Date getDateTime(){
+
+    @Override
+    public Calendar getCalendar() {
         final Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month);
@@ -58,10 +64,10 @@ public class DateTimeListener implements IDateTimeListener{
         calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.SECOND, 0);
-        return calendar.getTime();
+        return calendar;
     }
 
-    public CharSequence getYearMonthDayString(){
+    public CharSequence getYearMonthDayString() {
         final Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month);
@@ -70,12 +76,22 @@ public class DateTimeListener implements IDateTimeListener{
         return DateFormat.format(DATE_PICKER_FORMAT, date);
     }
 
-    public CharSequence getHourMinuteString(){
+    public CharSequence getHourMinuteString() {
         final Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.SECOND, 0);
         Date date = calendar.getTime();
         return DateFormat.format(TIME_PICKER_FORMAT, date);
+    }
+
+    public void setDefaultStart() {
+        final Calendar c = Calendar.getInstance();
+        c.add(Calendar.MONTH, -1);
+        year = c.get(Calendar.YEAR);
+        month = c.get(Calendar.MONTH);
+        day = c.get(Calendar.DAY_OF_MONTH);
+        hourOfDay = c.get(Calendar.HOUR_OF_DAY);
+        minute = c.get(Calendar.MINUTE);
     }
 }
