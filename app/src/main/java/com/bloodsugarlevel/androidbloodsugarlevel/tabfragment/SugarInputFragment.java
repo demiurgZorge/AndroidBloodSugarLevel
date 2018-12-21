@@ -1,7 +1,11 @@
 package com.bloodsugarlevel.androidbloodsugarlevel.tabfragment;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,16 +19,14 @@ import com.bloodsugarlevel.androidbloodsugarlevel.R;
 import com.bloodsugarlevel.androidbloodsugarlevel.dto.SugarCreateDto;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.HttpRequestFactory;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.IUiUpdateEntityListener;
-import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.IUiUpdateListListener;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.SugarCreateUiUpdateEntityListener;
 import com.bloodsugarlevel.androidbloodsugarlevel.input.DatePickerFragment;
 import com.bloodsugarlevel.androidbloodsugarlevel.input.DateTimeListener;
 import com.bloodsugarlevel.androidbloodsugarlevel.input.TimePickerFragment;
 
-import static com.bloodsugarlevel.androidbloodsugarlevel.tabfragment.GraphFragment.FRAPH_SUGAR_VOLEY_TAG;
-
 public class SugarInputFragment extends Fragment {
     public static final String SUGAR_CREATE_VOLEY_TAG = "SUGAR_CREATE_VOLEY_TAG";
+    public static final Float WRONG_RESULT = -1f;
 
     static RequestQueue mRequestQueue;
     IUiUpdateEntityListener mSugarCreateListenerImpl;
@@ -37,8 +39,9 @@ public class SugarInputFragment extends Fragment {
         View view = inflater.inflate(R.layout.sugar_input_fragment, container, false);
         Button timeButton = view.findViewById(R.id.timeButton);
         Button dateButton = view.findViewById(R.id.dateButton);
-        mSugarCreateListenerImpl = new SugarCreateUiUpdateEntityListener();
+        mSugarCreateListenerImpl = new SugarCreateUiUpdateEntityListener(getContext());
         mRequestQueue = Volley.newRequestQueue(getContext());
+
         mDateTime = new DateTimeListener(dateButton,timeButton);
         timeButton.setText(mDateTime.getHourMinuteString());
         timeButton.setOnClickListener(new Button.OnClickListener(){
@@ -77,18 +80,48 @@ public class SugarInputFragment extends Fragment {
     }
 
     private void setSugarListRequestListener() {
-        Float level = getValidateAndGetFloat(mEditText.getText().toString());
-
+        Float level = getValidateAndGetFloat(mEditText.getText());
+        if(level == WRONG_RESULT){
+            return;
+        }
         SugarCreateDto dto = new SugarCreateDto(mDateTime.getCalendar().getTime(), level);
-        JsonObjectRequest jsonObjectRequest = HttpRequestFactory.createSugarRequest(getContext(),
-                mSugarCreateListenerImpl,
-                dto,
-                SUGAR_CREATE_VOLEY_TAG);
+        Context ctx = getContext();
+        JsonObjectRequest jsonObjectRequest = HttpRequestFactory.createSugarRequest(ctx,
+                mSugarCreateListenerImpl, dto, SUGAR_CREATE_VOLEY_TAG, 1L);
         mRequestQueue.add(jsonObjectRequest);
     }
 
-    private Float getValidateAndGetFloat(String s) {
-        return Float.parseFloat(s);
+    private Float getValidateAndGetFloat(Editable s) {
+        if(s.toString() == null){
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                }
+            });
+            builder.setTitle("Empty level!");
+            builder.setMessage("Enter number for Sugar level!");
+            AlertDialog dialog = builder.create();
+            dialog.show();
+            return WRONG_RESULT;
+        }
+        try {
+            Float res = Float.parseFloat(s.toString());
+            if(res < 0f || res > 100f){
+                throw new Exception();
+            }
+            return Float.parseFloat(s.toString());
+        }catch (Exception e){
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                }
+            });
+            builder.setTitle("Error");
+            builder.setMessage("Enter number {min=0 : max=100.0} ");
+            AlertDialog dialog = builder.create();
+            dialog.show();
+            return WRONG_RESULT;
+        }
     }
 
     @Override

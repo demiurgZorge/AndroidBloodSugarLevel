@@ -93,7 +93,7 @@ public class GraphFragment extends Fragment implements Button.OnClickListener{
         JsonObjectRequest jsonObjectRequest = HttpRequestFactory.createSugarListRequest(getContext(),
                 mGraphListenerImpl, mBeginDate.getCalendar().getTime(),
                 mEndDate.getCalendar().getTime(),
-                FRAPH_SUGAR_VOLEY_TAG);
+                FRAPH_SUGAR_VOLEY_TAG, 1L);
         mRequestQueue.add(jsonObjectRequest);
     }
 

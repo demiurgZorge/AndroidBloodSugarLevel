@@ -14,10 +14,10 @@ public class EntityResponseListenerBase<T>  implements Response.Listener<JSONObj
 
     Context context;
     Class<T> klass;
-    IUiUpdateEntityListener<Class<T>> uiListener;
-    Class<T> data;
+    IUiUpdateEntityListener<T> uiListener;
 
-    public EntityResponseListenerBase(Context context, Class<T> klass, IUiUpdateEntityListener<Class<T>> uiListener){
+
+    public EntityResponseListenerBase(Context context, Class<T> klass, IUiUpdateEntityListener<T> uiListener){
         this.context = context;
         this.klass = klass;
         this.uiListener = uiListener;
@@ -27,8 +27,8 @@ public class EntityResponseListenerBase<T>  implements Response.Listener<JSONObj
     public void onResponse(JSONObject response) {
         ApiResponse resp = new ApiResponse(response);
         try {
-            ApiSuccessResult<Class<T>> result = ApiSuccessResult.fromResponse(resp, klass).getSuccessResult();
-            data = result.getData();
+            ApiSuccessResult<T> result = ApiSuccessResult.fromResponse(resp, klass).getSuccessResult();
+            T data = result.getData();
             uiListener.onResponse(data);
         } catch (Exception e) {
             showAlertDialog(e.getMessage());

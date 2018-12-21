@@ -8,7 +8,7 @@ import java.util.Date;
 
 public class DateTimeListener implements IDateTimeListener {
 
-    public static final String TIME_PICKER_FORMAT = "hh:mm:ss a";
+    public static final String TIME_PICKER_FORMAT = "hh:mm:ss";
     public static final String DATE_PICKER_FORMAT = "yyyy-MM-dd";
 
     public int hourOfDay;

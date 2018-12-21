@@ -42,4 +42,9 @@ public class UrlBuilder {
     public static String createSugarUrl(Long userId){
         return sugarService().append("create").append(SLASH).append(userId).toString();
     }
+
+    //"http://78.46.233.90:8080/auth/sugar/delete/1";
+    public static String deleteSugarUrl(Long userId){
+        return sugarService().append("delete").append(SLASH).append(userId).toString();
+    }
 }
