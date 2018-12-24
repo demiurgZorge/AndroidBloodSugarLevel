@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/sugarIdItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="534"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginLeft="@dimen/button_half_margin"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/sugarLevelItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="5.6"
+        android:textColor="@color/red"
+        android:layout_marginLeft="@dimen/button_half_margin"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/sugarDateItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="5.6"
+        android:textColor="@color/colorPrimary"
+        android:textSize="18sp"
+        android:layout_marginLeft="@dimen/button_half_margin"/>
+
+    <TextView
+        android:id="@+id/sugarTimeItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="5.6"
+        android:textColor="@color/yellow"
+        android:textSize="18sp"
+        android:layout_marginLeft="@dimen/button_half_margin"/>
+
+    <Switch
+        android:id="@+id/sugarDeleteSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="DELETE?"
+        android:layout_marginLeft="@dimen/button_half_margin"/>
+
+
+</LinearLayout>
