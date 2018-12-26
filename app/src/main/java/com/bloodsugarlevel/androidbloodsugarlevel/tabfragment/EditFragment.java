@@ -5,22 +5,18 @@ import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import com.bloodsugarlevel.androidbloodsugarlevel.MainActivity;
+import com.bloodsugarlevel.MyApplication;
 import com.bloodsugarlevel.androidbloodsugarlevel.R;
 import com.bloodsugarlevel.androidbloodsugarlevel.dto.SugarDto;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.EditSugarListenerImpl;
-import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.GraphListenerImpl;
-import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.HttpRequestFactory;
+import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.request.HttpRequestFactory;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.IUiUpdateEntityListener;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.IUiUpdateListListener;
 import com.bloodsugarlevel.androidbloodsugarlevel.input.DatePickerFragment;
@@ -41,7 +37,7 @@ public class EditFragment extends Fragment implements Button.OnClickListener{
 
 
     private LinearLayoutManager lLayout;
-    static RequestQueue mRequestQueue;
+    RequestQueue mRequestQueue;
     IUiUpdateListListener mEditSugarListenerImpl;
     View mFragmentView;
     Button beginDateButton;
@@ -56,6 +52,9 @@ public class EditFragment extends Fragment implements Button.OnClickListener{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mFragmentView = inflater.inflate(R.layout.edit_fragment, container, false);
+        mRequestQueue = MyApplication.getInstance().getRequestQueue();
+
+
         initBeginDateButton(mFragmentView);
         initEndDateButton(mFragmentView);
 
@@ -64,11 +63,13 @@ public class EditFragment extends Fragment implements Button.OnClickListener{
 
         RecyclerView recyclerView = (RecyclerView) mFragmentView.findViewById(R.id.sugarRecyclerView);
         recyclerView.setLayoutManager(lLayout);
-        mRecyclerViewAdapter = new RecyclerViewAdapter(getContext(), rowListItem);
+        mRecyclerViewAdapter = new RecyclerViewAdapter(getContext());
         recyclerView.setAdapter(mRecyclerViewAdapter);
 
         mEditSugarListenerImpl = new EditSugarListenerImpl(mRecyclerViewAdapter, recyclerView);
-        mRequestQueue = Volley.newRequestQueue(getContext());
+
+
+        setSugarListRequestListener();
         Button button = mFragmentView.findViewById(R.id.buttonEditRequest);
         button.setOnClickListener(this);
 
@@ -84,7 +85,7 @@ public class EditFragment extends Fragment implements Button.OnClickListener{
                             }
                         },
                         mRecyclerViewAdapter.getCheckedIdList(),
-                        EDIT_SUGAR_VOLEY_TAG, 1L);
+                        EDIT_SUGAR_VOLEY_TAG, MyApplication.getInstance().getSessionCookies());
                 mRequestQueue.add(jsonObjectRequest);
             }
         });
@@ -135,7 +136,7 @@ public class EditFragment extends Fragment implements Button.OnClickListener{
                 mEditSugarListenerImpl,
                 mBeginDate.getCalendar().getTime(),
                 mEndDate.getCalendar().getTime(),
-                EDIT_SUGAR_VOLEY_TAG, 1L);
+                EDIT_SUGAR_VOLEY_TAG, MyApplication.getInstance().getSessionCookies());
         mRequestQueue.add(jsonObjectRequest);
     }
 

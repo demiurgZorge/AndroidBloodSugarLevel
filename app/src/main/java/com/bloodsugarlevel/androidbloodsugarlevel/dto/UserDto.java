@@ -1,8 +1,11 @@
 package com.bloodsugarlevel.androidbloodsugarlevel.dto;
 
-class UserDto {
-    public Long id;
+public class UserDto {
+    public Long   id;
     public String name;
+    public String authToken;
+    public boolean active;
+    public String ip;
 
     public UserDto() {
     }

@@ -5,8 +5,9 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 
 import com.android.volley.Response;
-import com.bloodsugarlevel.common.ApiResponse;
-import com.bloodsugarlevel.common.ApiSuccessResult;
+import com.bloodsugarlevel.androidbloodsugarlevel.common.ApiResponse;
+import com.bloodsugarlevel.androidbloodsugarlevel.common.ApiSuccessResult;
+import com.bloodsugarlevel.androidbloodsugarlevel.tabfragment.AlertDialogManager;
 
 import org.json.JSONObject;
 
@@ -31,20 +32,8 @@ public class EntityResponseListenerBase<T>  implements Response.Listener<JSONObj
             T data = result.getData();
             uiListener.onResponse(data);
         } catch (Exception e) {
-            showAlertDialog(e.getMessage());
+            AlertDialogManager.showAlertDialog(context, "Error", e.getMessage());
         }
-    }
-
-    private void showAlertDialog(String string) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            }
-        });
-        builder.setTitle("Error");
-        builder.setMessage(string);
-        AlertDialog dialog = builder.create();
-        dialog.show();
     }
 }
 

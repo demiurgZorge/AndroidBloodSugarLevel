@@ -14,10 +14,11 @@ import android.widget.EditText;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
+import com.bloodsugarlevel.MyApplication;
 import com.bloodsugarlevel.androidbloodsugarlevel.R;
 import com.bloodsugarlevel.androidbloodsugarlevel.dto.SugarCreateDto;
-import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.HttpRequestFactory;
+import com.bloodsugarlevel.androidbloodsugarlevel.dto.UserDto;
+import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.request.HttpRequestFactory;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.IUiUpdateEntityListener;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.SugarCreateUiUpdateEntityListener;
 import com.bloodsugarlevel.androidbloodsugarlevel.input.DatePickerFragment;
@@ -28,23 +29,24 @@ public class SugarInputFragment extends Fragment {
     public static final String SUGAR_CREATE_VOLEY_TAG = "SUGAR_CREATE_VOLEY_TAG";
     public static final Float WRONG_RESULT = -1f;
 
-    static RequestQueue mRequestQueue;
     IUiUpdateEntityListener mSugarCreateListenerImpl;
     DateTimeListener mDateTime;
     EditText mEditText;
+    private RequestQueue mRequestQueue;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.sugar_input_fragment, container, false);
+        mRequestQueue = MyApplication.getInstance().getRequestQueue();
         Button timeButton = view.findViewById(R.id.timeButton);
         Button dateButton = view.findViewById(R.id.dateButton);
         mSugarCreateListenerImpl = new SugarCreateUiUpdateEntityListener(getContext());
-        mRequestQueue = Volley.newRequestQueue(getContext());
 
-        mDateTime = new DateTimeListener(dateButton,timeButton);
+
+        mDateTime = new DateTimeListener(dateButton, timeButton);
         timeButton.setText(mDateTime.getHourMinuteString());
-        timeButton.setOnClickListener(new Button.OnClickListener(){
+        timeButton.setOnClickListener(new Button.OnClickListener() {
 
             @Override
             public void onClick(View view) {
@@ -56,7 +58,7 @@ public class SugarInputFragment extends Fragment {
 
 
         dateButton.setText(mDateTime.getYearMonthDayString());
-        dateButton.setOnClickListener(new Button.OnClickListener(){
+        dateButton.setOnClickListener(new Button.OnClickListener() {
 
             @Override
             public void onClick(View view) {
@@ -67,11 +69,11 @@ public class SugarInputFragment extends Fragment {
         });
 
         Button inputButton = view.findViewById(R.id.inputButton);
-        inputButton.setOnClickListener(new Button.OnClickListener(){
+        inputButton.setOnClickListener(new Button.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                setSugarListRequestListener();
+                createSugarRequestListener();
             }
         });
 
@@ -79,7 +81,7 @@ public class SugarInputFragment extends Fragment {
         return view;
     }
 
-    private void setSugarListRequestListener() {
+    private void createSugarRequestListener() {
         Float level = getValidateAndGetFloat(mEditText.getText());
         if(level == WRONG_RESULT){
             return;
@@ -87,7 +89,10 @@ public class SugarInputFragment extends Fragment {
         SugarCreateDto dto = new SugarCreateDto(mDateTime.getCalendar().getTime(), level);
         Context ctx = getContext();
         JsonObjectRequest jsonObjectRequest = HttpRequestFactory.createSugarRequest(ctx,
-                mSugarCreateListenerImpl, dto, SUGAR_CREATE_VOLEY_TAG, 1L);
+                mSugarCreateListenerImpl,
+                dto,
+                SUGAR_CREATE_VOLEY_TAG,
+                MyApplication.getInstance().getSessionCookies());
         mRequestQueue.add(jsonObjectRequest);
     }
 

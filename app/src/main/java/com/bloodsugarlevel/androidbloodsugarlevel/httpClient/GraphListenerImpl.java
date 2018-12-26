@@ -12,25 +12,26 @@ public class GraphListenerImpl implements IUiUpdateListListener<SugarDto> {
 
     GraphView graph;
 
-    public GraphListenerImpl(GraphView graph){
+    public GraphListenerImpl(GraphView graph) {
         super();
         this.graph = graph;
     }
+
     private void setGraphWithSugarLevelData(GraphView graph, List<SugarDto> listDto) {
         graph.clearSecondScale();
         graph.removeAllSeries();
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>();
-        for(SugarDto dto : listDto){
+        for (SugarDto dto : listDto) {
             series.appendData(new DataPoint(dto.date, dto.level), true, listDto.size());
         }
         graph.addSeries(series);
 
         graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(graph.getContext()));
-        graph.getGridLabelRenderer().setNumHorizontalLabels( listDto.size()-1);
+        graph.getGridLabelRenderer().setNumHorizontalLabels(listDto.size() - 1);
 //
 ////        // set manual x bounds to have nice steps
         graph.getViewport().setMinX(listDto.get(0).date.getTime());
-        graph.getViewport().setMaxX(listDto.get(listDto.size()-1).date.getTime());
+        graph.getViewport().setMaxX(listDto.get(listDto.size() - 1).date.getTime());
         graph.getViewport().setXAxisBoundsManual(true);
 //
 //        graph.getViewport().setMinY(0.0f);

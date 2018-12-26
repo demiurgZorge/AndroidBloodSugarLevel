@@ -1,5 +1,8 @@
 package com.bloodsugarlevel.androidbloodsugarlevel;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -15,12 +18,24 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.bloodsugarlevel.MyApplication;
+import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.EntityResponseListenerBase;
+import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.IUiUpdateEntityListener;
+import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.request.CookieRequest;
+import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.request.HttpRequestFactory;
 import com.bloodsugarlevel.androidbloodsugarlevel.tabfragment.EditFragment;
 import com.bloodsugarlevel.androidbloodsugarlevel.tabfragment.GraphFragment;
 import com.bloodsugarlevel.androidbloodsugarlevel.tabfragment.SugarInputFragment;
 
+import static com.bloodsugarlevel.androidbloodsugarlevel.tabfragment.SugarInputFragment.SUGAR_CREATE_VOLEY_TAG;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    public static final String LOGOUT_VOLEY_TAG = "LOGOUT_VOLEY_TAG";
+
     private TabAdapter adapter;
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -29,9 +44,13 @@ public class MainActivity extends AppCompatActivity
             R.drawable.graph,
             R.drawable.edit
     };
+    private RequestQueue mRequestQueue;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mRequestQueue = MyApplication.getInstance().getRequestQueue();
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -47,6 +66,7 @@ public class MainActivity extends AppCompatActivity
 
         createDrawer(toolbar);
         createFragmentAdapter();
+
     }
 
     private void createDrawer(Toolbar toolbar) {
@@ -75,10 +95,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }
+
             @Override
             public void onPageSelected(int position) {
                 highLightCurrentTab(position);
             }
+
             @Override
             public void onPageScrollStateChanged(int state) {
             }
@@ -124,17 +146,19 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        if (id == R.id.logout_18dp) {
+            CookieRequest jsonObjectRequest = HttpRequestFactory.signoutUserRequest(this,
+                    new IUiUpdateEntityListener<String>() {
+                        @Override
+                        public void onResponse(String object) {
+                            MyApplication.getInstance().logout();
+                            startLoginActivity();
+                        }
+                    },
+                    LOGOUT_VOLEY_TAG,
+                    MyApplication.getInstance().getSessionCookies());
+            mRequestQueue.add(jsonObjectRequest);
+        } else if (id == R.id.nav_logout) {
 
         }
 
@@ -143,6 +167,12 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    private void startLoginActivity() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
     /////////////////
 
     private void highLightCurrentTab(int position) {
@@ -156,6 +186,14 @@ public class MainActivity extends AppCompatActivity
         assert tab != null;
         tab.setCustomView(null);
         tab.setCustomView(adapter.getSelectedTabView(position));
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mRequestQueue != null) {
+            mRequestQueue.cancelAll(LOGOUT_VOLEY_TAG);
+        }
     }
 
 

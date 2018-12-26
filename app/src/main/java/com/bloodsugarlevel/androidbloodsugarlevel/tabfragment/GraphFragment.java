@@ -10,10 +10,10 @@ import android.widget.Button;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
+import com.bloodsugarlevel.MyApplication;
 import com.bloodsugarlevel.androidbloodsugarlevel.R;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.GraphListenerImpl;
-import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.HttpRequestFactory;
+import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.request.HttpRequestFactory;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.IUiUpdateListListener;
 import com.bloodsugarlevel.androidbloodsugarlevel.input.DatePickerFragment;
 import com.bloodsugarlevel.androidbloodsugarlevel.input.DateTimeListener;
@@ -25,7 +25,7 @@ public class GraphFragment extends Fragment implements Button.OnClickListener{
     private static final long MIN_CLICK_INTERVAL=600;
     private long mLastClickTime = SystemClock.uptimeMillis();
     View mFragmentView;
-    static RequestQueue mRequestQueue;
+    RequestQueue mRequestQueue;
     IUiUpdateListListener mGraphListenerImpl;
     Button beginDateButton;
     Button endDateButton;
@@ -51,7 +51,7 @@ public class GraphFragment extends Fragment implements Button.OnClickListener{
         mFragmentView = inflater.inflate(R.layout.graph_fragment, container, false);
         final GraphView graph = (GraphView) mFragmentView.findViewById(R.id.shugarGraph);
         mGraphListenerImpl = new GraphListenerImpl(graph);
-        mRequestQueue = Volley.newRequestQueue(getContext());
+        mRequestQueue = MyApplication.getInstance().getRequestQueue();
         Button button = mFragmentView.findViewById(R.id.buttonGraphicLevel);
         button.setOnClickListener(this);
 
@@ -93,7 +93,7 @@ public class GraphFragment extends Fragment implements Button.OnClickListener{
         JsonObjectRequest jsonObjectRequest = HttpRequestFactory.createSugarListRequest(getContext(),
                 mGraphListenerImpl, mBeginDate.getCalendar().getTime(),
                 mEndDate.getCalendar().getTime(),
-                FRAPH_SUGAR_VOLEY_TAG, 1L);
+                FRAPH_SUGAR_VOLEY_TAG, MyApplication.getInstance().getSessionCookies());
         mRequestQueue.add(jsonObjectRequest);
     }
 
