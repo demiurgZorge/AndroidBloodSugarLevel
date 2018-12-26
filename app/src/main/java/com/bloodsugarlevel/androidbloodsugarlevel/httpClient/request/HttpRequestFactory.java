@@ -105,12 +105,13 @@ public class HttpRequestFactory {
 
     public static CookieRequest signoutUserRequest(final Context context,
                                                               IUiUpdateEntityListener uiUpdateListener,
+                                                   Response.ErrorListener errorListener,
                                                               String tag, String sessionIdCookie){
         CookieRequest request = new CookieRequest(Request.Method.GET,
                 UrlBuilder.signoutUserUrl(),
                 null,
                 new  EntityResponseListenerBase<>(context, String.class, uiUpdateListener),
-                new ErroResponseListenerImpl(context), tag, sessionIdCookie);
+                errorListener, tag, sessionIdCookie);
         return request;
     }
 

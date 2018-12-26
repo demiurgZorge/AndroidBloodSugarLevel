@@ -19,12 +19,15 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.bloodsugarlevel.MyApplication;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.EntityResponseListenerBase;
+import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.ErroResponseListenerImpl;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.IUiUpdateEntityListener;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.request.CookieRequest;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.request.HttpRequestFactory;
+import com.bloodsugarlevel.androidbloodsugarlevel.tabfragment.AlertDialogManager;
 import com.bloodsugarlevel.androidbloodsugarlevel.tabfragment.EditFragment;
 import com.bloodsugarlevel.androidbloodsugarlevel.tabfragment.GraphFragment;
 import com.bloodsugarlevel.androidbloodsugarlevel.tabfragment.SugarInputFragment;
@@ -147,6 +150,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.logout_18dp) {
+            String cookie = MyApplication.getInstance().getSessionCookies();
             CookieRequest jsonObjectRequest = HttpRequestFactory.signoutUserRequest(this,
                     new IUiUpdateEntityListener<String>() {
                         @Override
@@ -155,8 +159,16 @@ public class MainActivity extends AppCompatActivity
                             startLoginActivity();
                         }
                     },
+                    new ErroResponseListenerImpl(this) {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            MyApplication.getInstance().logout();
+                            startLoginActivity();
+
+                        }
+                    },
                     LOGOUT_VOLEY_TAG,
-                    MyApplication.getInstance().getSessionCookies());
+                    cookied);
             mRequestQueue.add(jsonObjectRequest);
         } else if (id == R.id.nav_logout) {
 
