@@ -9,6 +9,7 @@ import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -74,6 +75,7 @@ public class SugarInputFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 createSugarRequestListener();
+                hideInputMethod();
             }
         });
 
@@ -135,5 +137,19 @@ public class SugarInputFragment extends Fragment {
         if (mRequestQueue != null) {
             mRequestQueue.cancelAll(SUGAR_CREATE_VOLEY_TAG);
         }
+
+        hideInputMethod();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        hideInputMethod();
+    }
+
+    public void hideInputMethod() {
+        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
     }
 }

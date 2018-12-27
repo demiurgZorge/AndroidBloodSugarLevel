@@ -46,14 +46,21 @@
                 android:text="Update!" />
         </LinearLayout>
 
-
+<!--
         <com.jjoe64.graphview.GraphView
-            android:id="@+id/shugarGraph"
+            android:id="@+id/shugarGraph1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/fab_margin"
             app:seriesColor="#ee0000"
             app:seriesType="line" />
+-->
+
+        <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/shugarGraph"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_margin="@dimen/fab_margin"/>
 
     </LinearLayout>
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -97,15 +98,18 @@ public class MainActivity extends AppCompatActivity
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                System.out.print("onPageScrolled");
             }
 
             @Override
             public void onPageSelected(int position) {
                 highLightCurrentTab(position);
+                System.out.print("onPageSelected");
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
+                System.out.print("onPageScrollStateChanged");
             }
         });
     }
@@ -168,7 +172,7 @@ public class MainActivity extends AppCompatActivity
                         }
                     },
                     LOGOUT_VOLEY_TAG,
-                    cookied);
+                    cookie);
             mRequestQueue.add(jsonObjectRequest);
         } else if (id == R.id.nav_logout) {
 
@@ -198,6 +202,9 @@ public class MainActivity extends AppCompatActivity
         assert tab != null;
         tab.setCustomView(null);
         tab.setCustomView(adapter.getSelectedTabView(position));
+        if( position != 0){
+            ((SugarInputFragment) adapter.getItem(0)).hideInputMethod();
+        }
     }
 
     @Override

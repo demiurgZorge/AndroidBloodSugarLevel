@@ -3,23 +3,19 @@ package com.bloodsugarlevel.androidbloodsugarlevel;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
-
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -34,12 +30,11 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.bloodsugarlevel.MyApplication;
-import com.bloodsugarlevel.androidbloodsugarlevel.Utils.JsonUtils;
 import com.bloodsugarlevel.androidbloodsugarlevel.dto.LoginDto;
 import com.bloodsugarlevel.androidbloodsugarlevel.dto.RegisterUserDto;
 import com.bloodsugarlevel.androidbloodsugarlevel.dto.UserDto;
-import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.request.HttpRequestFactory;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.IUiUpdateEntityListener;
+import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.request.HttpRequestFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +67,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         if (MyApplication.getInstance().isUserLogIn()) {
             startMainActivity();
-        }else if (MyApplication.getInstance().tokenAuthAllow()) {
+        } else if (MyApplication.getInstance().tokenAuthAllow()) {
             JsonObjectRequest jsonObjectRequest = HttpRequestFactory.loginWithTokenUserRequest(this,
                     new IUiUpdateEntityListener<UserDto>() {
                         @Override
@@ -83,7 +78,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     MyApplication.getInstance().getToken(),
                     LOGIN_VOLEY_TAG);
             mRequestQueue.add(jsonObjectRequest);
-        }else {
+        } else {
 
             // Set up the login form.
             mEmailView = (AutoCompleteTextView) findViewById(R.id.email);

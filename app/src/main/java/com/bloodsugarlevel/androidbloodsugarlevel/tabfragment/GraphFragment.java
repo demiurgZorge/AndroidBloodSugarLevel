@@ -17,6 +17,7 @@ import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.request.HttpRequest
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.IUiUpdateListListener;
 import com.bloodsugarlevel.androidbloodsugarlevel.input.DatePickerFragment;
 import com.bloodsugarlevel.androidbloodsugarlevel.input.DateTimeListener;
+import com.github.mikephil.charting.charts.LineChart;
 import com.jjoe64.graphview.GraphView;
 
 
@@ -49,7 +50,7 @@ public class GraphFragment extends Fragment implements Button.OnClickListener{
              Bundle savedInstanceState) {
 
         mFragmentView = inflater.inflate(R.layout.graph_fragment, container, false);
-        final GraphView graph = (GraphView) mFragmentView.findViewById(R.id.shugarGraph);
+        LineChart graph = (LineChart) mFragmentView.findViewById(R.id.shugarGraph);
         mGraphListenerImpl = new GraphListenerImpl(graph);
         mRequestQueue = MyApplication.getInstance().getRequestQueue();
         Button button = mFragmentView.findViewById(R.id.buttonGraphicLevel);
