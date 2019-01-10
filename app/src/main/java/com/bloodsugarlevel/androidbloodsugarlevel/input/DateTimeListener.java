@@ -8,7 +8,7 @@ import java.util.Date;
 
 public class DateTimeListener implements IDateTimeListener {
 
-    public static final String TIME_PICKER_FORMAT = "hh:mm:ss";
+    public static final String TIME_PICKER_FORMAT = "hh:mm";
     public static final String DATE_PICKER_FORMAT = "yyyy-MM-dd";
 
     public int hourOfDay;
@@ -85,9 +85,19 @@ public class DateTimeListener implements IDateTimeListener {
         return DateFormat.format(TIME_PICKER_FORMAT, date);
     }
 
-    public void setDefaultStart() {
+    public void setDefaultStart(int START_DAY_SHIFT) {
         final Calendar c = Calendar.getInstance();
-        c.add(Calendar.MONTH, -1);
+        c.add(Calendar.DAY_OF_MONTH,START_DAY_SHIFT);
+        year = c.get(Calendar.YEAR);
+        month = c.get(Calendar.MONTH);
+        day = c.get(Calendar.DAY_OF_MONTH);
+        hourOfDay = c.get(Calendar.HOUR_OF_DAY);
+        minute = c.get(Calendar.MINUTE);
+    }
+
+    public void setDefaultEnd(int END_DAY_SHIFT) {
+        final Calendar c = Calendar.getInstance();
+        c.add(Calendar.DAY_OF_MONTH,END_DAY_SHIFT);
         year = c.get(Calendar.YEAR);
         month = c.get(Calendar.MONTH);
         day = c.get(Calendar.DAY_OF_MONTH);

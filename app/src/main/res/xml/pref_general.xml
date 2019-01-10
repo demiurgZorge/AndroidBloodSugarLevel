@@ -1,0 +1,23 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:capitalize="words"
+        android:defaultValue="@string/pref_start_default_display_name"
+        android:inputType="number"
+        android:key="START_DAY_SHIFT_KEY"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="StartShift" />
+
+    <EditTextPreference
+        android:capitalize="words"
+        android:defaultValue="@string/pref_end_default_display_name"
+        android:inputType="number"
+        android:key="END_DAY_SHIFT_KEY"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="EndShift" />
+
+</PreferenceScreen>

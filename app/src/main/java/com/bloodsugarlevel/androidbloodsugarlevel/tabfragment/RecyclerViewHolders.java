@@ -19,7 +19,6 @@ public class RecyclerViewHolders extends RecyclerView.ViewHolder{
 
     public RecyclerViewHolders(View itemView) {
         super(itemView);
-
         id = (TextView)itemView.findViewById(R.id.sugarIdItem);
         level = (TextView)itemView.findViewById(R.id.sugarLevelItem);
         date = (TextView)itemView.findViewById(R.id.sugarDateItem);

@@ -13,9 +13,9 @@
     <item android:title="Communicate">
         <menu>
             <item
-                android:id="@+id/nav_logout"
-                android:icon="@drawable/logout_18dp"
-                android:title="Logout" />
+                android:id="@+id/update_session"
+                android:icon="@drawable/update_session"
+                android:title="Update session" />
         </menu>
     </item>
 

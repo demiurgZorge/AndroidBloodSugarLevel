@@ -26,6 +26,8 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/button_margin"
                     android:layout_weight="1"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:background="@color/colorPrimaryDark"
                     android:text="Begin" />
 
                 <Button
@@ -34,6 +36,8 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/button_margin"
                     android:layout_weight="1"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:background="@color/colorPrimaryDark"
                     android:text="End" />
             </LinearLayout>
 
@@ -43,6 +47,8 @@
                 android:layout_height="match_parent"
                 android:layout_margin="@dimen/button_margin"
                 android:layout_weight="5"
+                android:textColor="@color/colorPrimaryLight"
+                android:background="@color/colorPrimaryDark"
                 android:text="Update!" />
         </LinearLayout>
 

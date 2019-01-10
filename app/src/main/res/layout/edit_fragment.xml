@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,6 +21,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/button_margin"
                 android:layout_weight="1"
+                android:textColor="@color/colorPrimaryLight"
+                android:background="@color/colorPrimaryDark"
                 android:text="Begin" />
 
             <Button
@@ -28,6 +31,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/button_margin"
                 android:layout_weight="1"
+                android:textColor="@color/colorPrimaryLight"
+                android:background="@color/colorPrimaryDark"
                 android:text="End" />
         </LinearLayout>
 
@@ -37,6 +42,8 @@
             android:layout_height="match_parent"
             android:layout_margin="@dimen/button_margin"
             android:layout_weight="5"
+            android:textColor="@color/colorPrimaryLight"
+            android:background="@color/colorPrimaryDark"
             android:text="List" />
 
         <Button
@@ -45,12 +52,15 @@
             android:layout_height="match_parent"
             android:layout_margin="@dimen/button_margin"
             android:layout_weight="5"
+            android:textColor="@color/colorPrimaryLight"
+            android:background="@color/colorPrimaryDark"
             android:text="Delete" />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/sugarRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        />
 
 </LinearLayout>

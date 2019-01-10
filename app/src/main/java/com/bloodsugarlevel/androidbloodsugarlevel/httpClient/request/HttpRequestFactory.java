@@ -2,11 +2,9 @@ package com.bloodsugarlevel.androidbloodsugarlevel.httpClient.request;
 
 import android.content.Context;
 
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.bloodsugarlevel.MyApplication;
 import com.bloodsugarlevel.androidbloodsugarlevel.Utils.JsonUtils;
 import com.bloodsugarlevel.androidbloodsugarlevel.common.FilterState;
 import com.bloodsugarlevel.androidbloodsugarlevel.common.PagingState;
@@ -17,6 +15,7 @@ import com.bloodsugarlevel.androidbloodsugarlevel.dto.LoginDto;
 import com.bloodsugarlevel.androidbloodsugarlevel.dto.RegisterUserDto;
 import com.bloodsugarlevel.androidbloodsugarlevel.dto.SugarCreateDto;
 import com.bloodsugarlevel.androidbloodsugarlevel.dto.SugarDto;
+import com.bloodsugarlevel.androidbloodsugarlevel.dto.TokenDto;
 import com.bloodsugarlevel.androidbloodsugarlevel.dto.UserDto;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.EntityResponseListenerBase;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.ErroResponseListenerImpl;
@@ -24,8 +23,6 @@ import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.IUiUpdateEntityList
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.IUiUpdateListListener;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.ListResponseListenerBase;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.UrlBuilder;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,7 +45,7 @@ public class HttpRequestFactory {
         filters.add(endState);
 
         PagingState pagingState = new PagingState();
-        SortState sortState = new SortState();
+        SortState sortState = new SortState("byDatetime", SortState.SortType.ASCENDING);
         QueryState query = new QueryState(pagingState, sortState, filters);
 
         CookieRequest request = new CookieRequest(Request.Method.POST,
@@ -127,15 +124,17 @@ public class HttpRequestFactory {
         return request;
     }
 
-    public static JsonObjectRequest loginWithTokenUserRequest(final Context context,
-                                                              IUiUpdateEntityListener uiUpdateListener,
+    public static AuthRequest loginWithTokenUserRequest(final Context context,
+                                                              final IUiUpdateEntityListener uiUpdateListener,
                                                               String token,
                                                               String tag){
+        TokenDto tokenDto = new TokenDto(token);
         AuthRequest request = new AuthRequest(Request.Method.POST,
                 UrlBuilder.loginWithTokenUserUrl(),
-                JsonUtils.toJSONObject(token),
+                tokenDto.toJSONObject(),
                 new  EntityResponseListenerBase<>(context, UserDto.class, uiUpdateListener),
-                new ErroResponseListenerImpl(context), tag);
+                new ErroResponseListenerImpl(context),
+                tag);
         return request;
     }
 

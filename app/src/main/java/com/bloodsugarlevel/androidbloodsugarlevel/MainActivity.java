@@ -18,14 +18,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.bloodsugarlevel.MyApplication;
+import com.bloodsugarlevel.androidbloodsugarlevel.dto.UserDto;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.EntityResponseListenerBase;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.ErroResponseListenerImpl;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.IUiUpdateEntityListener;
+import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.request.AuthRequest;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.request.CookieRequest;
 import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.request.HttpRequestFactory;
 import com.bloodsugarlevel.androidbloodsugarlevel.tabfragment.AlertDialogManager;
@@ -49,6 +52,7 @@ public class MainActivity extends AppCompatActivity
             R.drawable.edit
     };
     private RequestQueue mRequestQueue;
+    private TextView loginNavHeaderTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,16 +61,8 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        setSupportActionBar(toolbar);
 
         createDrawer(toolbar);
         createFragmentAdapter();
@@ -76,12 +72,21 @@ public class MainActivity extends AppCompatActivity
     private void createDrawer(Toolbar toolbar) {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                String name = MyApplication.getInstance().getLoggedUserName();
+                loginNavHeaderTextView = drawerView.findViewById(R.id.loginNavHeaderTextView);
+                loginNavHeaderTextView.setText(name);
+            }
+        };
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
     }
 
     private void createFragmentAdapter() {
@@ -98,18 +103,15 @@ public class MainActivity extends AppCompatActivity
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                System.out.print("onPageScrolled");
             }
 
             @Override
             public void onPageSelected(int position) {
                 highLightCurrentTab(position);
-                System.out.print("onPageSelected");
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                System.out.print("onPageScrollStateChanged");
             }
         });
     }
@@ -124,18 +126,16 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startSettingsActivity();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
     @Override
     public void onBackPressed() {
@@ -154,28 +154,24 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.logout_18dp) {
-            String cookie = MyApplication.getInstance().getSessionCookies();
-            CookieRequest jsonObjectRequest = HttpRequestFactory.signoutUserRequest(this,
-                    new IUiUpdateEntityListener<String>() {
+            if (MyApplication.getInstance().isInternetAllow()) {
+                logoutOnline();
+            } else {
+                MyApplication.getInstance().logout();
+                startLoginActivity();
+            }
+        } else if (id == R.id.update_session) {
+            AuthRequest jsonObjectRequest = HttpRequestFactory.loginWithTokenUserRequest(this,
+                    new IUiUpdateEntityListener<UserDto>() {
                         @Override
-                        public void onResponse(String object) {
-                            MyApplication.getInstance().logout();
-                            startLoginActivity();
+                        public void onResponse(UserDto userDto) {
+                            showProgress(false);
                         }
                     },
-                    new ErroResponseListenerImpl(this) {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            MyApplication.getInstance().logout();
-                            startLoginActivity();
-
-                        }
-                    },
-                    LOGOUT_VOLEY_TAG,
-                    cookie);
+                    MyApplication.getInstance().getToken(),
+                    LOGOUT_VOLEY_TAG);
             mRequestQueue.add(jsonObjectRequest);
-        } else if (id == R.id.nav_logout) {
-
+            showProgress(true);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -183,11 +179,51 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    private void logoutOnline() {
+        String cookie = MyApplication.getInstance().getSessionCookies();
+        CookieRequest jsonObjectRequest = HttpRequestFactory.signoutUserRequest(this,
+                new IUiUpdateEntityListener<String>() {
+                    @Override
+                    public void onResponse(String object) {
+                        MyApplication.getInstance().logout();
+                        startLoginActivity();
+                    }
+                },
+                new ErroResponseListenerImpl(this) {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        MyApplication.getInstance().logout();
+                        startLoginActivity();
+
+                    }
+                },
+                LOGOUT_VOLEY_TAG,
+                cookie);
+        mRequestQueue.add(jsonObjectRequest);
+    }
+
+    private void showProgress(boolean show) {
+        View progressView = findViewById(R.id.tab_progress);
+        View tabView = findViewById(R.id.tab_layout_id);
+        if(show){
+            progressView.setVisibility(View.VISIBLE);
+            tabView.setVisibility(View.GONE);
+        }else{
+            progressView.setVisibility(View.GONE);
+            tabView.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void startLoginActivity() {
         Intent intent = new Intent(this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
+    }
+
+    private void startSettingsActivity() {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
     /////////////////
 

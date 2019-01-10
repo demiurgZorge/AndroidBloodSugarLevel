@@ -9,6 +9,7 @@ import java.util.Date;
 public class SugarCreateDto extends BaseDto{
     public Float level;
     public Long date;
+    public String userLogin;
 
     public SugarCreateDto() {
 

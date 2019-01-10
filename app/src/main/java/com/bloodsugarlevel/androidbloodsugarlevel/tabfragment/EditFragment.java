@@ -95,7 +95,8 @@ public class EditFragment extends Fragment implements Button.OnClickListener{
     private void initBeginDateButton(View mFragmentView) {
         beginDateButton = mFragmentView.findViewById(R.id.beginEditDateButton);
         mBeginDate = new DateTimeListener(beginDateButton,null);
-        mBeginDate.setDefaultStart();
+        int startShift = MyApplication.getInstance().getDefaultShiftStartDays();
+        mBeginDate.setDefaultStart(startShift);
         beginDateButton.setText(mBeginDate.getYearMonthDayString());
         beginDateButton.setOnClickListener(new Button.OnClickListener(){
 
@@ -110,6 +111,8 @@ public class EditFragment extends Fragment implements Button.OnClickListener{
     private void initEndDateButton(View mFragmentView) {
         endDateButton = mFragmentView.findViewById(R.id.endEditDateButton);
         mEndDate = new DateTimeListener(endDateButton,null);
+        int endShift = MyApplication.getInstance().getDefaultShiftEndDays();
+        mEndDate.setDefaultEnd(endShift);
         endDateButton.setText(mEndDate.getYearMonthDayString());
         endDateButton.setOnClickListener(new Button.OnClickListener(){
 
@@ -132,12 +135,12 @@ public class EditFragment extends Fragment implements Button.OnClickListener{
     }
 
     private void setSugarListRequestListener() {
-        JsonObjectRequest jsonObjectRequest = HttpRequestFactory.createSugarListRequest(getContext(),
-                mEditSugarListenerImpl,
-                mBeginDate.getCalendar().getTime(),
-                mEndDate.getCalendar().getTime(),
-                EDIT_SUGAR_VOLEY_TAG, MyApplication.getInstance().getSessionCookies());
-        mRequestQueue.add(jsonObjectRequest);
+//        JsonObjectRequest jsonObjectRequest = HttpRequestFactory.createSugarListRequest(getContext(),
+//                mEditSugarListenerImpl,
+//                mBeginDate.getCalendar().getTime(),
+//                mEndDate.getCalendar().getTime(),
+//                EDIT_SUGAR_VOLEY_TAG, MyApplication.getInstance().getSessionCookies());
+//        mRequestQueue.add(jsonObjectRequest);
     }
 
     @Override

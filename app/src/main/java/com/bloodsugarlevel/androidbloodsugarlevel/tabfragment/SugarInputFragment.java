@@ -1,8 +1,12 @@
 package com.bloodsugarlevel.androidbloodsugarlevel.tabfragment;
 
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
@@ -16,6 +20,7 @@ import android.widget.EditText;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.bloodsugarlevel.MyApplication;
+import com.bloodsugarlevel.androidbloodsugarlevel.LoginActivity;
 import com.bloodsugarlevel.androidbloodsugarlevel.R;
 import com.bloodsugarlevel.androidbloodsugarlevel.dto.SugarCreateDto;
 import com.bloodsugarlevel.androidbloodsugarlevel.dto.UserDto;
@@ -25,6 +30,10 @@ import com.bloodsugarlevel.androidbloodsugarlevel.httpClient.SugarCreateUiUpdate
 import com.bloodsugarlevel.androidbloodsugarlevel.input.DatePickerFragment;
 import com.bloodsugarlevel.androidbloodsugarlevel.input.DateTimeListener;
 import com.bloodsugarlevel.androidbloodsugarlevel.input.TimePickerFragment;
+import com.bloodsugarlevel.androidbloodsugarlevel.livedata.SugarRangeRequestDto;
+import com.bloodsugarlevel.androidbloodsugarlevel.livedata.UserViewModel;
+import com.bloodsugarlevel.androidbloodsugarlevel.room.entities.Sugar;
+import com.bloodsugarlevel.androidbloodsugarlevel.room.entities.User;
 
 public class SugarInputFragment extends Fragment {
     public static final String SUGAR_CREATE_VOLEY_TAG = "SUGAR_CREATE_VOLEY_TAG";
@@ -34,6 +43,9 @@ public class SugarInputFragment extends Fragment {
     DateTimeListener mDateTime;
     EditText mEditText;
     private RequestQueue mRequestQueue;
+
+    private UserViewModel userViewModel;
+    Observer<Sugar> mSugarObserver;
 
 
     @Override
@@ -80,6 +92,22 @@ public class SugarInputFragment extends Fragment {
         });
 
         mEditText = view.findViewById(R.id.sugarLevelEditText);
+
+        userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
+
+        mSugarObserver = new Observer<Sugar> () {
+
+            @Override
+            public void onChanged(@Nullable Sugar sugar) {
+                if(sugar != null) {
+                    AlertDialogManager.showAlertDialog(getContext(),"Succes", "Sugar Level " + sugar.level + " accepted in inner DB");
+                }else{
+                    AlertDialogManager.showAlertDialog(getContext(),"Error", "Cant write into inner DB");
+                }
+                return;
+            }
+        };
+
         return view;
     }
 
@@ -90,12 +118,27 @@ public class SugarInputFragment extends Fragment {
         }
         SugarCreateDto dto = new SugarCreateDto(mDateTime.getCalendar().getTime(), level);
         Context ctx = getContext();
-        JsonObjectRequest jsonObjectRequest = HttpRequestFactory.createSugarRequest(ctx,
-                mSugarCreateListenerImpl,
-                dto,
-                SUGAR_CREATE_VOLEY_TAG,
-                MyApplication.getInstance().getSessionCookies());
-        mRequestQueue.add(jsonObjectRequest);
+
+        if(MyApplication.getInstance().isInternetAllow()) {
+            JsonObjectRequest jsonObjectRequest = HttpRequestFactory.createSugarRequest(ctx,
+                    mSugarCreateListenerImpl,
+                    dto,
+                    SUGAR_CREATE_VOLEY_TAG,
+                    MyApplication.getInstance().getSessionCookies());
+            mRequestQueue.add(jsonObjectRequest);
+        }else{
+            saveSugareOffline(dto);
+        }
+    }
+
+    private void saveSugareOffline(SugarCreateDto dto) {
+        String login = MyApplication.getInstance().getLoggedUserName();
+        dto.userLogin = login;
+        MutableLiveData<Sugar> sugarModelData = new MutableLiveData<Sugar>();
+        sugarModelData.removeObservers(this);
+        sugarModelData.observe(this, mSugarObserver);
+        userViewModel.setSugarData(sugarModelData);
+        userViewModel.insert(dto);
     }
 
     private Float getValidateAndGetFloat(Editable s) {
